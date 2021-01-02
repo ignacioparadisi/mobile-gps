@@ -22,4 +22,8 @@ export class UserService {
       return this.http.get<User>('https://community-service-ucab.herokuapp.com/api/user', { params });
     }
   }
+
+  public login(user): Observable<User> {
+    return this.http.post<User>('https://community-service-ucab.herokuapp.com/api/login', user);
+  }
 }

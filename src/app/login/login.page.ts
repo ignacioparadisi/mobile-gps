@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LoadingController, ModalController } from '@ionic/angular';
 import { AuthGuard } from 'src/resources/auth-guard';
+import { UserService } from 'src/services/user.service';
 import { RegisterPage } from '../register/register.page';
 
 @Component({
@@ -24,6 +25,7 @@ export class LoginPage implements OnInit {
   constructor(
     private modalController: ModalController,
     private loadingController: LoadingController,
+    private userService: UserService,
     private router: Router) { }
 
   ngOnInit() {
@@ -44,26 +46,33 @@ export class LoginPage implements OnInit {
    */
   private async presentLoading() {
     const loading = await this.loadingController.create({
-      message: 'Iniciando sesión',
-      duration: 2000
+      message: 'Iniciando sesión'
     });
     await loading.present();
-
-    this.router.navigate(['/tabs']);
+    return loading;
   }
 
   /**
    * Ejecuta el login del usuario enviando el correo y la contraseña al servidor.
    */
-  login() {
+  async login() {
     this.clearValidationMessages();
     this.validateFields();
     if (this.loginForm.valid) {
-      const user = {
-        email: '123@123.com'
-      };
-      AuthGuard.saveUser(user);
-      this.presentLoading();
+      let loadingView = await this.presentLoading();
+      console.log('Logging in');
+      this.userService.login({
+        email: this.loginForm.get('email').value,
+        password: this.loginForm.get('password').value
+      }).subscribe((user) => {
+        console.log(user);
+        loadingView.dismiss();
+        AuthGuard.saveUser(user);
+        this.router.navigate(['/tabs']);
+      }, error => {
+        loadingView.dismiss();
+        console.log(error);
+      });
     }
   }
 
