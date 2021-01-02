@@ -1,6 +1,6 @@
 {
-  "appId": "io.ionic.starter",
-  "appName": "mobile-gps",
+  "appId": "com.ignacioparadisi.mobilegps",
+  "appName": "Mobile GPS",
   "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "www",

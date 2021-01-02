@@ -11,11 +11,15 @@ export class UserService {
 
   constructor(private http: HttpClient) { }
 
-  public createUser(user): Observable<User> {
+  public createUser(user) {
     return this.http.post<User>('https://community-service-ucab.herokuapp.com/api/users', user);
   }
 
-  public getSignedInUser(): Observable<User> {
+  public login(authInfo) {
+    return this.http.post<User>('https://community-service-ucab.herokuapp.com/api/login', authInfo);
+  }
+
+  public getSignedInUser() {
     const localUser = AuthGuard.getUser();
     const params = { email: localUser.email };
     if (localUser !== null) {
@@ -23,7 +27,8 @@ export class UserService {
     }
   }
 
-  public login(user): Observable<User> {
-    return this.http.post<User>('https://community-service-ucab.herokuapp.com/api/login', user);
+  public getUserByEmail(email) {
+    const params = { email };
+    return this.http.get<User>('https://community-service-ucab.herokuapp.com/api/user', { params });
   }
 }

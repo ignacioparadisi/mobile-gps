@@ -1,4 +1,4 @@
-<ion-header>
+<ion-header translucent="true">
   <ion-toolbar>
     <ion-title>Cuenta</ion-title>
     <ion-buttons slot="primary">
@@ -7,7 +7,12 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content fullscreen="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Cuenta</ion-title>
+    </ion-toolbar>
+  </ion-header>
   <form [formGroup]="registerForm">
     <!-- Name Field -->
     <ion-item>
@@ -77,7 +82,7 @@
     <!-- Password Field -->
     <ion-item>
       <ion-label position="floating">Contraseña</ion-label>
-      <ion-input type="password" formControlName="password"></ion-input>
+      <ion-input type="password" formControlName="password" [readonly]="!isEditEnabled"></ion-input>
     </ion-item>
     <div *ngFor="let error of validationMessages.password">
       <div class="error">
@@ -89,7 +94,7 @@
     <!-- Password Validation Field -->
     <ion-item>
       <ion-label position="floating">Comprobar Contraseña</ion-label>
-      <ion-input type="password" formControlName="validPassword"></ion-input>
+      <ion-input type="password" formControlName="validPassword" [readonly]="!isEditEnabled"></ion-input>
     </ion-item>
     <div *ngFor="let error of validationMessages.validPassword">
       <div class="error">
