@@ -9,11 +9,21 @@ const routes: Routes = [
     children: [
       {
         path: 'routes',
-        loadChildren: () => import('../routes/routes.module').then(m => m.RoutesPageModule)
+        children: [
+          {
+            path: '',
+            loadChildren: () => import('../routes/routes.module').then(m => m.RoutesPageModule)
+          },
+          { 
+            path: ':id', 
+            loadChildren: () => import('../route-detail/route-detail.module').then( m => m.RouteDetailPageModule)
+          }
+        ]
+        
       },
       {
-        path: 'tab2',
-        loadChildren: () => import('../tab2/tab2.module').then(m => m.Tab2PageModule)
+        path: 'tracker',
+        loadChildren: () => import('../tracker/tracker.module').then(m => m.TrackerPageModule)
       },
       {
         path: 'account',

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AuthGuard } from 'src/resources/auth-guard';
 import { Route } from 'src/classes/route';
+import { Observable, throwError } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -20,5 +21,13 @@ export class RouteService {
         if (localUser !== null) {
             return this.http.get<Route[]>(`https://community-service-ucab.herokuapp.com/api/users/${localUser.id}/routes`);
         }
+    }
+
+    public getRouteById(id: number): Observable<Route> {
+        const localUser = AuthGuard.getUser();
+        if (localUser !== null) {
+            return this.http.get<Route>(`https://community-service-ucab.herokuapp.com/api/users/${localUser.id}/routes/${id}`);
+        }
+        return throwError('User is not authenticated');
     }
 }

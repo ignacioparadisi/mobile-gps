@@ -1,0 +1,21 @@
+<ion-header translucent="true">
+  <ion-toolbar>
+    <ion-title>{{ route?.name }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">{{ route?.name }}</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-card *ngFor="let point of route?.points">
+      <ion-item>Latitude: {{ point.latitude }}</ion-item>
+      <ion-item>Longitude: {{ point.longitude }}</ion-item>
+      <ion-item>Precision: {{ point.precision }}</ion-item>
+  </ion-card>
+
+  <canvas #mapCanvas></canvas>
+</ion-content>

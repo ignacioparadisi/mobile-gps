@@ -1,6 +1,6 @@
 export class Point {
+    index: number;
     longitude: number;
     latitude: number;
-    altitude: number;
-    accuracy: number;
+    precision: number;
 }
