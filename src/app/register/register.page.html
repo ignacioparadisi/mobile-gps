@@ -1,0 +1,109 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Crear cuenta</ion-title>
+    <ion-buttons slot="primary">
+      <ion-button (click)="dismiss()">Cancelar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="registerForm" (ngSubmit)="createAccount()">
+    <!-- Name Field -->
+    <ion-item>
+      <ion-label position="floating">Nombre y Apellido<ion-text color="danger">*</ion-text>
+      </ion-label>
+      <ion-input type="text" formControlName="name" required></ion-input>
+    </ion-item>
+    <div *ngFor="let error of validationMessages.name">
+      <div class="error">
+        <ion-icon name="alert" color="danger"></ion-icon>
+        <ion-text color="danger">{{ error }}</ion-text>
+      </div>
+    </div>
+
+    <!-- Document ID Field -->
+    <ion-item>
+      <ion-label position="floating">Cédula<ion-text color="danger">*</ion-text>
+      </ion-label>
+      <ion-input type="number" formControlName="documentId" required></ion-input>
+    </ion-item>
+    <div *ngFor="let error of validationMessages.documentId">
+      <div class="error">
+        <ion-icon name="alert" color="danger"></ion-icon>
+        <ion-text color="danger">{{ error }}</ion-text>
+      </div>
+    </div>
+
+    <!-- Birthday Field -->
+    <ion-item>
+      <ion-label position="floating">Fecha de Nacimiento<ion-text color="danger">*</ion-text>
+      </ion-label>
+      <ion-datetime displayFormat="MMM DD, YYYY" formControlName="birthday" required></ion-datetime>
+    </ion-item>
+    <div *ngFor="let error of validationMessages.birthday">
+      <div class="error">
+        <ion-icon name="alert" color="danger"></ion-icon>
+        <ion-text color="danger">{{ error }}</ion-text>
+      </div>
+    </div>
+
+    <!-- Phone Field -->
+    <ion-item>
+      <ion-label position="floating">Número telefónico<ion-text color="danger">*</ion-text>
+      </ion-label>
+      <ion-input type="tel" formControlName="phone" required></ion-input>
+    </ion-item>
+    <div *ngFor="let error of validationMessages.phone">
+      <div class="error">
+        <ion-icon name="alert" color="danger"></ion-icon>
+        <ion-text color="danger">{{ error }}</ion-text>
+      </div>
+    </div>
+
+    <!-- Email Field -->
+    <ion-item>
+      <ion-label position="floating">Correo electrónico<ion-text color="danger">*</ion-text>
+      </ion-label>
+      <ion-input type="email" formControlName="email" required></ion-input>
+    </ion-item>
+    <div *ngFor="let error of validationMessages.email">
+      <div class="error">
+        <ion-icon name="alert" color="danger"></ion-icon>
+        <ion-text color="danger">{{ error }}</ion-text>
+      </div>
+    </div>
+
+    <!-- Password Field -->
+    <ion-item>
+      <ion-label position="floating">Contraseña<ion-text color="danger">*</ion-text>
+      </ion-label>
+      <ion-input type="password" formControlName="password" required></ion-input>
+    </ion-item>
+    <div *ngFor="let error of validationMessages.password">
+      <div class="error">
+        <ion-icon name="alert" color="danger"></ion-icon>
+        <ion-text color="danger">{{ error }}</ion-text>
+      </div>
+    </div>
+
+    <!-- Password Validation Field -->
+    <ion-item>
+      <ion-label position="floating">Comprobar Contraseña<ion-text color="danger">*</ion-text>
+      </ion-label>
+      <ion-input type="password" formControlName="validPassword" required></ion-input>
+    </ion-item>
+    <div *ngFor="let error of validationMessages.validPassword">
+      <div class="error">
+        <ion-icon name="alert" color="danger"></ion-icon>
+        <ion-text color="danger">{{ error }}</ion-text>
+      </div>
+    </div>
+
+    <!-- Create Account Button -->
+    <div class="ion-padding">
+      <ion-button expand="block" type="submit" class="ion-no-margin">Crear cuenta
+      </ion-button>
+    </div>
+  </form>
+</ion-content>

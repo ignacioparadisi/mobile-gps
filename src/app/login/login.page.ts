@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LoadingController, ModalController } from '@ionic/angular';
 import { AuthGuard } from 'src/resources/auth-guard';
+import { RegisterPage } from '../register/register.page';
 
 @Component({
   selector: 'app-login',
@@ -31,12 +32,12 @@ export class LoginPage implements OnInit {
   /**
    * Muestra la vista para hacer el registro de usuario.
    */
-  // async presentSignUpModal() {
-  //   const modal = await this.modalController.create({
-  //     component: RegisterPage
-  //   });
-  //   return await modal.present();
-  // }
+  async presentSignUpModal() {
+    const modal = await this.modalController.create({
+      component: RegisterPage
+    });
+    return await modal.present();
+  }
 
   /**
    * Presenta una vista con un spinner.

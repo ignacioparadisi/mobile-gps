@@ -11,8 +11,8 @@ export class UserService {
 
   constructor(private http: HttpClient) { }
 
-  public createUser(user) {
-    return this.http.post('https://community-service-ucab.herokuapp.com/api/users', user);
+  public createUser(user): Observable<User> {
+    return this.http.post<User>('https://community-service-ucab.herokuapp.com/api/users', user);
   }
 
   public getSignedInUser(): Observable<User> {
