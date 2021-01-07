@@ -1,6 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
-import { ExploreContainerComponentModule } from '../explore-container/explore-container.module';
 
 import { TrackerPage } from './tracker.page';
 
@@ -11,7 +10,7 @@ describe('TrackerPage', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [TrackerPage],
-      imports: [IonicModule.forRoot(), ExploreContainerComponentModule]
+      imports: [IonicModule.forRoot()]
     }).compileComponents();
 
     fixture = TestBed.createComponent(TrackerPage);

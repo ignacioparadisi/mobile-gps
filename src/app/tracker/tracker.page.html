@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Tab 2
+      Rastrear
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -9,9 +9,27 @@
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Tab 2</ion-title>
+      <ion-title size="large">Rastrear</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <app-explore-container name="Tab 2 page"></app-explore-container>
+  <div class="container ion-activatable ion-text-center" (click)="didTapTrackButton()">
+    <ion-ripple-effect></ion-ripple-effect>
+    <h2>Puntos registrados</h2>
+    <h1>{{ distance }}</h1>
+
+    <ion-label>Longitud: <ion-text>{{ lastPoint.longitude }}</ion-text>
+    </ion-label>
+    <br />
+    <ion-label>Latitud: <ion-text>{{ lastPoint.latitude }}</ion-text>
+    </ion-label>
+    <br />
+    <ion-label>Precisión: <ion-text>{{ lastPoint.precision }}m</ion-text>
+    </ion-label>
+  </div>
+
+  <div class="button-container">
+    <ion-button expand="block" class="ion-no-margin" [disabled]="!didStartTracking" (click)="stopTracking()">Guardar
+    </ion-button>
+  </div>
 </ion-content>

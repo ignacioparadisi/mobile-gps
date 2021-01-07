@@ -57,11 +57,11 @@ export class AccountPage implements OnInit {
     this.loadingView = await this.loadingController.create({
       message: 'Cargando'
     });
-    await this.loadingView.present();
+    this.loadingView.present();
   }
 
-  private async dismissLoading() {
-    await this.loadingView.dismiss();
+  private dismissLoading() {
+    this.loadingView.dismiss();
   }
 
   public logOut() {
