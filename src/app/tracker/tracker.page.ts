@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Plugins, HapticsImpactStyle, HapticsNotificationType } from '@capacitor/core';
-import { BackgroundGeolocation, BackgroundGeolocationConfig, BackgroundGeolocationEvents, BackgroundGeolocationResponse } from '@ionic-native/background-geolocation/ngx';
-import { AlertController, LoadingController } from '@ionic/angular';
-import { Point } from 'src/classes/point';
+import { LoadingController, AlertController } from '@ionic/angular';
 import { RouteService } from 'src/services/route.service';
+import { Point } from 'src/classes/point';
 const { Haptics } = Plugins;
+const { Geolocation } = Plugins;
 
 @Component({
   selector: 'app-tracker',
@@ -13,82 +13,27 @@ const { Haptics } = Plugins;
 })
 export class TrackerPage implements OnInit {
 
-  private currentCoordinate: Point;
-  distance: number;
-  lastPoint: Point;
   points: Point[] = [];
+  lastPoint: Point;
   didStartTracking = false;
 
-  constructor(private backgroundGeolocation: BackgroundGeolocation,
+  constructor(
     private loadingController: LoadingController,
-    private alertController: AlertController,
-    private routeService: RouteService) {}
+    private routeService: RouteService,
+    private alertController: AlertController) { }
 
   ngOnInit() {
+    // this.presentLoading('Calibrando GPS');
+    // this.calibrateGPS((response) => {
+    //   this.loadingController.dismiss();
+    // }, (error) => {
+    //   this.loadingController.dismiss();
+    // }, () => {
+    //   this.loadingController.dismiss();
+    // }, {});
   }
 
-  didTapTrackButton() {
-    if (this.didStartTracking) {
-      this.saveCoordinate(this.currentCoordinate);
-    } else {
-      this.startTracking();
-    }
-  }
-
-  startTracking() {
-    const config: BackgroundGeolocationConfig = {
-      desiredAccuracy: 10,
-      stationaryRadius: 1,
-      distanceFilter: 1,
-      debug: true, //  enable this hear sounds for background-geolocation life-cycle.
-      stopOnTerminate: false, // enable this to clear background location settings when the app terminates
-      startForeground: false
-    };
-
-    this.backgroundGeolocation.configure(config).then(() => {
-      this.backgroundGeolocation
-        .on(BackgroundGeolocationEvents.location)
-        .subscribe((location: BackgroundGeolocationResponse) => {
-          // No guardar la coordenada en este momento porque esto se ejecuta cada vez que la ubiucación cambia. Hay que calcular
-          // cuando han pasado 10 metros y luego avisar al usuario para que de tap para guardar la coordenada.
-          this.currentCoordinate = new Point(location.longitude, location.latitude, location.accuracy);
-          this.distance = this.currentCoordinate.distance(this.lastPoint);
-          console.log(location);
-          this.loadingController.dismiss();
-          // this.sendGPS(location);
-
-          // IMPORTANT:  You must execute the finish method here to inform the native plugin that you're finished,
-          // and the background-task may be completed.  You must do this regardless if your operations are successful or not.
-          // IF YOU DON'T, ios will CRASH YOUR APP for spending too much time in the background.
-          this.backgroundGeolocation.finish();
-        });
-    });
-
-    // start recording location
-    this.didStartTracking = true;
-    this.presentLoading('Calibrando GPS');
-    this.backgroundGeolocation.start();
-  }
-
-  stopTracking() {
-    this.backgroundGeolocation.stop();
-    this.createRoute();
-  }
-
-  hapticsImpact(style = HapticsImpactStyle.Heavy) {
-    Haptics.impact({
-      style
-    });
-  }
-
-  private saveCoordinate(coordinate) {
-    const point = new Point(coordinate.longitude, coordinate.latitude, coordinate.accuracy);
-    this.lastPoint = point;
-    this.points.push(point);
-    this.hapticsImpact();
-  }
-
-    /**
+  /**
    * Presenta una vista con un spinner.
    */
   private async presentLoading(message) {
@@ -97,6 +42,121 @@ export class TrackerPage implements OnInit {
     });
     await loading.present();
   }
+
+  hapticsImpact(style = HapticsImpactStyle.Heavy) {
+    Haptics.impact({
+      style
+    });
+  }
+
+  async saveLocation() {
+    if (!this.didStartTracking) {
+      this.didStartTracking = true;
+    }
+    const options = {
+      timeout: 10000,
+      enableHighAccuracy: true
+    };
+    try {
+      this.presentLoading('Obteniendo Coordenada');
+      let coordinates = await Geolocation.getCurrentPosition(options);
+      this.loadingController.dismiss();
+      console.log(coordinates)
+
+        // if (coordinates.coords.accuracy > 20) {
+        //   this.presentLoading('Calibrando GPS');
+        //   this.calibrateGPS((position) => {
+        //     console.log('Save location after calibration');
+        //     this.saveCoordinate(position.coords);
+        //     this.loadingController.dismiss();
+        //   }, () => {
+        //     this.loadingController.dismiss();
+        //   }, {}, {});
+        // } else {
+        this.saveCoordinate(coordinates.coords);
+        this.hapticsImpact(HapticsImpactStyle.Medium);
+        // }
+    } catch (error) {
+      this.presentErrorAlert(`${error}`);
+      console.log(error);
+    }
+  }
+
+  private saveCoordinate(coordinate) {
+    const point = new Point(coordinate.longitude, coordinate.latitude, coordinate.accuracy);
+    this.lastPoint = point;
+    this.points.push(point);
+  }
+
+  endTracking() {
+    this.createRoute();
+  }
+
+  // calibrateGPS(geolocationSuccess, geolocationError, geoprogress, options) {
+  //   let lastCheckedPosition,
+  //     locationEventCount = 0,
+  //     watch,
+  //     timerID;
+
+  //   options = options || {};
+
+  //   const foundPosition = (position) => {
+  //     console.log('Should dismiss');
+  //     geolocationSuccess(position);
+  //   };
+
+  //   const checkLocation = (position) => {
+  //     console.log(position.coords.accuracy);
+  //     lastCheckedPosition = position;
+  //     locationEventCount = locationEventCount + 1;
+  //     // We ignore the first event unless it's the only one received because some devices seem to send a cached
+  //     // location even when maxaimumAge is set to zero
+  //     console.log(locationEventCount);
+  //     console.log((position.coords.accuracy <= options.desiredAccuracy) && (locationEventCount > 1));
+  //     console.log( `(${position.coords.accuracy} <= ${options.desiredAccuracy}) && (${locationEventCount} > 1)`)
+  //     if ((position.coords.accuracy <= options.desiredAccuracy) && (locationEventCount > 1)) {
+  //       clearTimeout(timerID);
+  //       watch.unsubscribe();
+  //       foundPosition(position);
+  //     } else {
+  //       geoprogress(position);
+  //     }
+  //   };
+
+  //   const stopTrying = () => {
+  //     watch.unsubscribe();
+  //     foundPosition(lastCheckedPosition);
+  //   };
+
+  //   const onError = (error) => {
+  //     clearTimeout(timerID);
+  //     watch.unsubscribe();
+  //     geolocationError(error);
+  //   };
+
+  //   if (!options.maxWait) {
+  //     options.maxWait = 20000;
+  //   }
+  //   if (!options.desiredAccuracy) {
+  //     options.desiredAccuracy = 15;
+  //   }
+  //   if (!options.timeout) {
+  //     options.timeout = options.maxWait;
+  //   }
+
+  //   options.maximumAge = 0;
+  //   options.enableHighAccuracy = true;
+
+  //   watch = Geolocation.watchPosition(options, (position, error) => {
+  //     if (error) {
+  //       this.presentErrorAlert(`${error}`);
+  //       onError(error);
+  //       return;
+  //     }
+  //     checkLocation(position);
+  //   });
+  //   timerID = setTimeout(stopTrying, options.maxWait); // Set a timeout that will abandon the location loop
+  // }
 
   private createRoute() {
     const route = {
@@ -122,18 +182,17 @@ export class TrackerPage implements OnInit {
       console.log(error);
       Haptics.notification({ type: HapticsNotificationType.ERROR });
       this.loadingController.dismiss();
-      this.presentErrorAlert();
+      this.presentErrorAlert('Hubo un error al crear la ruta.');
     });
-    
   }
 
-    /**
+  /**
    * Presenta una alerta de error
    */
-  async presentErrorAlert() {
+  async presentErrorAlert(message: string) {
     const alert = await this.alertController.create({
       header: 'Error',
-      message: 'Hubo un error al crear la ruta.',
+      message: message,
       buttons: ['Aceptar']
     });
 

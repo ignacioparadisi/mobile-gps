@@ -6,7 +6,6 @@ import { FormsModule } from '@angular/forms';
 import { TrackerPage } from './tracker.page';
 
 import { TrackerPageRoutingModule } from './tracker-routing.module';
-import { BackgroundGeolocation } from '@ionic-native/background-geolocation/ngx';
 
 @NgModule({
   imports: [
