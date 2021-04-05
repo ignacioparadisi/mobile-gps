@@ -1,27 +1,38 @@
-<ion-header>
+<ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title title="large">Rastrear</ion-title>
+    <ion-title>
+      Rastrear
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <div class="container ion-activatable ion-text-center" (click)="saveLocation()">
-    <ion-ripple-effect></ion-ripple-effect>
-    <h2>Puntos registrados</h2>
-    <h1>{{ points.length }}</h1>
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Rastrear</ion-title>
+    </ion-toolbar>
+  </ion-header>
 
-    <ion-label>Longitud: <ion-text>{{ lastPoint.longitude }}</ion-text>
-    </ion-label>
-    <br />
-    <ion-label>Latitud: <ion-text>{{ lastPoint.latitude }}</ion-text>
-    </ion-label>
-    <br />
-    <ion-label>Precisión: <ion-text>{{ lastPoint.precision }}m</ion-text>
-    </ion-label>
-  </div>
+  <div class="container ion-activatable ion-text-center">
 
-  <div class="button-container">
-    <ion-button expand="block" class="ion-no-margin" [disabled]="!didStartTracking" (click)="endTracking()">Guardar
-    </ion-button>
-  </div>
+
+  <h1>Puntos</h1>
+  <ion-list>
+    <ion-card *ngFor="let point of points">
+        <ion-card-header>
+          <ion-card-subtitle>GET COORDINATES</ion-card-subtitle>
+          <ion-card-title>Geolocation</ion-card-title>
+        </ion-card-header>
+    
+        <ion-card-content>
+          Latitude: {{ point?.latitude }} <br>
+          Longitude: {{ point?.longitude }} <br>
+          Accuracy: {{ point?.precision }}m
+        </ion-card-content>
+      </ion-card>
+  </ion-list>
+
+  <ion-button expand="block" (click)="saveLocation()">Locate</ion-button>
+</div>
+
 </ion-content>

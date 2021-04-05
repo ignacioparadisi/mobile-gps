@@ -14,7 +14,6 @@ const { Geolocation } = Plugins;
 export class TrackerPage implements OnInit {
 
   points: Point[] = [];
-  lastPoint: Point;
   didStartTracking = false;
 
   constructor(
@@ -58,9 +57,9 @@ export class TrackerPage implements OnInit {
       enableHighAccuracy: true
     };
     try {
-      this.presentLoading('Obteniendo Coordenada');
+      // this.presentLoading('Obteniendo Coordenada');
       let coordinates = await Geolocation.getCurrentPosition(options);
-      this.loadingController.dismiss();
+      // this.loadingController.dismiss();
       console.log(coordinates)
 
         // if (coordinates.coords.accuracy > 20) {
@@ -77,14 +76,13 @@ export class TrackerPage implements OnInit {
         this.hapticsImpact(HapticsImpactStyle.Medium);
         // }
     } catch (error) {
-      this.presentErrorAlert(`${error}`);
+      this.presentErrorAlert(error.message);
       console.log(error);
     }
   }
 
   private saveCoordinate(coordinate) {
     const point = new Point(coordinate.longitude, coordinate.latitude, coordinate.accuracy);
-    this.lastPoint = point;
     this.points.push(point);
   }
 
