@@ -13,8 +13,11 @@ const { Geolocation } = Plugins;
 })
 export class TrackerPage implements OnInit {
 
+  currentPosition: Point = null;
   points: Point[] = [];
   didStartTracking = false;
+  watchId: string;
+  distance: number = 0;
 
   constructor(
     private loadingController: LoadingController,
@@ -48,42 +51,72 @@ export class TrackerPage implements OnInit {
     });
   }
 
+  startTracking() {
+    const options = {
+      timeout: 10000,
+      enableHighAccuracy: true
+    };
+    this.watchId = Geolocation.watchPosition(options, (position, error) => {
+      if (error) {
+        console.log(error);
+        return;
+      }
+      console.log(position);
+      this.currentPosition = new Point(position.coords.longitude, position.coords.latitude, position.coords.accuracy);
+
+      if (this.points.length > 0) {
+        let lastPoint = this.points[this.points.length - 1];
+        let distance = lastPoint.distancePythagoras(this.currentPosition);
+        console.log(distance);
+        this.distance = distance;
+        if (distance > 10) {
+          // Vibrate
+          console.log('Aviso de guardar coordenada');
+        }
+      }
+    });
+  }
+
   async saveLocation() {
     if (!this.didStartTracking) {
       this.didStartTracking = true;
+      this.startTracking();
+      return;
     }
     const options = {
       timeout: 10000,
       enableHighAccuracy: true
     };
-    try {
-      // this.presentLoading('Obteniendo Coordenada');
-      let coordinates = await Geolocation.getCurrentPosition(options);
-      // this.loadingController.dismiss();
-      console.log(coordinates)
+    this.saveCoordinate(this.currentPosition);
+    this.hapticsImpact(HapticsImpactStyle.Medium);
+    // try {
+    //   // this.presentLoading('Obteniendo Coordenada');
+    //   let coordinates = await Geolocation.getCurrentPosition(options);
+    //   // this.loadingController.dismiss();
+    //   console.log(coordinates)
 
-        // if (coordinates.coords.accuracy > 20) {
-        //   this.presentLoading('Calibrando GPS');
-        //   this.calibrateGPS((position) => {
-        //     console.log('Save location after calibration');
-        //     this.saveCoordinate(position.coords);
-        //     this.loadingController.dismiss();
-        //   }, () => {
-        //     this.loadingController.dismiss();
-        //   }, {}, {});
-        // } else {
-        this.saveCoordinate(coordinates.coords);
-        this.hapticsImpact(HapticsImpactStyle.Medium);
-        // }
-    } catch (error) {
-      this.presentErrorAlert(error.message);
-      console.log(error);
-    }
+    //     // if (coordinates.coords.accuracy > 20) {
+    //     //   this.presentLoading('Calibrando GPS');
+    //     //   this.calibrateGPS((position) => {
+    //     //     console.log('Save location after calibration');
+    //     //     this.saveCoordinate(position.coords);
+    //     //     this.loadingController.dismiss();
+    //     //   }, () => {
+    //     //     this.loadingController.dismiss();
+    //     //   }, {}, {});
+    //     // } else {
+    //     this.saveCoordinate(coordinates.coords);
+    //     this.hapticsImpact(HapticsImpactStyle.Medium);
+    //     // }
+    // } catch (error) {
+    //   this.presentErrorAlert(error.message);
+    //   console.log(error);
+    // }
   }
 
-  private saveCoordinate(coordinate) {
-    const point = new Point(coordinate.longitude, coordinate.latitude, coordinate.accuracy);
-    this.points.push(point);
+  private saveCoordinate(coordinate: Point) {
+    // const point = new Point(coordinate.longitude, coordinate.latitude, coordinate.accuracy);
+    this.points.push(coordinate);
   }
 
   endTracking() {

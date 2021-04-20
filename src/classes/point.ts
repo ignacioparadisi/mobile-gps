@@ -32,4 +32,14 @@ export class Point {
             )
         )
     }
+
+    distancePythagoras(point: Point) {
+        if (this.latitude == point.latitude && this.longitude == point.longitude) {
+            return 0;
+        }
+        const earthRadius = 6371; // 6371km
+        const x = (this.longitude - point.longitude) * Math.cos((this.latitude + point.latitude)/2);
+        const latitudeDif = this.latitude - point.latitude;
+        return Math.sqrt(x*x + latitudeDif*latitudeDif) * earthRadius;
+    }
 }
