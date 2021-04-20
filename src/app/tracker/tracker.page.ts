@@ -59,6 +59,7 @@ export class TrackerPage implements OnInit {
     this.watchId = Geolocation.watchPosition(options, (position, error) => {
       if (error) {
         console.log(error);
+        this.presentErrorAlert(error.message);
         return;
       }
       console.log(position);
