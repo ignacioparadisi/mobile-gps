@@ -59,7 +59,11 @@ export class TrackerPage implements OnInit {
     this.watchId = Geolocation.watchPosition(options, (position, error) => {
       if (error) {
         console.log(error);
-        this.presentErrorAlert(error.message);
+        if (error.code == 1) {
+          this.presentErrorAlert("Permiso para utilizar Ubicación Denegado", "Ve a Configuraciones > Privacidad > Localización > Sitios web de Safari y asegúrate que el acceso está permitido al usar la app.");
+        } else {
+          this.presentErrorAlert(null, error.message);
+        }
         return;
       }
       console.log(position);
@@ -214,16 +218,20 @@ export class TrackerPage implements OnInit {
       console.log(error);
       Haptics.notification({ type: HapticsNotificationType.ERROR });
       this.loadingController.dismiss();
-      this.presentErrorAlert('Hubo un error al crear la ruta.');
+      this.presentErrorAlert(null, 'Hubo un error al crear la ruta.');
     });
   }
 
   /**
    * Presenta una alerta de error
    */
-  async presentErrorAlert(message: string) {
+  async presentErrorAlert(title: string = null, message: string) {
+    let header = "Error"
+    if (title != null) {
+      header = title
+    }
     const alert = await this.alertController.create({
-      header: 'Error',
+      header: header,
       message: message,
       buttons: ['Aceptar']
     });
