@@ -9,7 +9,7 @@ ion-content {
 
 .button-container {
     position: absolute;
-    bottom: 100px;
+    bottom: 200px;
     right: 16px;
     left: 16px;
 }
@@ -28,4 +28,10 @@ ion-content {
     left: 60px;
     width: 100px;
     height: 100px;
+}
+
+ion-bottom-sheet {
+    .scroll-content {
+        overflow-y: scroll;
+    }
 }

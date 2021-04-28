@@ -54,4 +54,9 @@ export class RoutesPage implements OnInit {
     console.log(message);
   }
 
+  goToDetail(route) {
+    console.log(route);
+    this.router.navigate(['tabs/routes/detail', { route: JSON.stringify(route) }])
+  }
+
 }

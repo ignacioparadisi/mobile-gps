@@ -16,8 +16,9 @@ export class RouteDetailPage implements OnInit, AfterViewInit {
     private routeService: RouteService) { }
 
   ngOnInit() {
-    const routeId = Number(this.activatedRoute.snapshot.paramMap.get('id'));
-    this.fetchRoute(routeId);
+    const route = this.activatedRoute.snapshot.paramMap.get('route');
+    console.log(JSON.parse(route));
+    // this.fetchRoute(routeId);
   }
 
   ngAfterViewInit() {

@@ -18,10 +18,10 @@
       <ion-list>
         <ion-card *ngFor="let route of routes; let i = index">
           <ion-item-sliding>
-            <ion-item [routerLink]="['/tabs/routes', route.id]" routerDirection="forward">
+            <ion-item (click)="goToDetail(route)" routerDirection="forward">
               <ion-icon name="pin" slot="start"></ion-icon>
               <ion-label>{{route.name}}</ion-label>
-              <ion-label class="ion-text-right">15m</ion-label>
+              <ion-label class="ion-text-right">15m</ion-label>å
             </ion-item>
             <ion-item-options side="end">
               <ion-item-option color="danger" (click)="delete(i)">Eliminar</ion-item-option>

@@ -3,6 +3,7 @@ import { Plugins, HapticsImpactStyle, HapticsNotificationType } from '@capacitor
 import { LoadingController, AlertController } from '@ionic/angular';
 import { RouteService } from 'src/services/route.service';
 import { Point } from 'src/classes/point';
+import { SheetState } from 'ion-bottom-sheet';
 const { Haptics } = Plugins;
 const { Geolocation } = Plugins;
 
@@ -19,6 +20,9 @@ export class TrackerPage implements OnInit {
   watchId: string;
   distance: number = 0;
 
+  // Sheet Variables
+  sheetState: SheetState = SheetState.Bottom
+
   constructor(
     private loadingController: LoadingController,
     private routeService: RouteService,
@@ -33,6 +37,8 @@ export class TrackerPage implements OnInit {
     // }, () => {
     //   this.loadingController.dismiss();
     // }, {});
+    this.startTracking();
+    this.didStartTracking = true;
   }
 
   /**
@@ -83,11 +89,6 @@ export class TrackerPage implements OnInit {
   }
 
   async saveLocation() {
-    if (!this.didStartTracking) {
-      this.didStartTracking = true;
-      this.startTracking();
-      return;
-    }
     const options = {
       timeout: 10000,
       enableHighAccuracy: true
@@ -126,6 +127,7 @@ export class TrackerPage implements OnInit {
 
   endTracking() {
     this.createRoute();
+    Geolocation.clearWatch({ id: this.watchId });
   }
 
   // calibrateGPS(geolocationSuccess, geolocationError, geoprogress, options) {
@@ -237,6 +239,10 @@ export class TrackerPage implements OnInit {
     });
 
     await alert.present();
+  }
+
+  saveButtonIsDisabled(): boolean {
+    return this.points.length < 2
   }
 
 }

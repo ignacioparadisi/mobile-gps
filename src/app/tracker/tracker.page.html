@@ -13,31 +13,44 @@
     </ion-toolbar>
   </ion-header>
 
-  <div class="container ion-activatable ion-text-center">
+  <div class="container ion-activatable ion-text-center" (click)="saveLocation()">
+    <ion-ripple-effect></ion-ripple-effect>
+    <h1>Crear Ruta</h1>
+    <p>Coordenada Actual: ({{currentPosition?.latitude}}, {{currentPosition?.longitude}}) </p>
+    <p>Precisión: {{currentPosition?.precision}}</p>
+    <p>Distancia desde el último punto: {{distance}}</p>
+    <p>Coordenadas guardados: {{ points.length }}</p>
 
+    <div class="button-container">
+      <ion-button expand="block" class="ion-no-margin" [disabled]="saveButtonIsDisabled()" (click)="endTracking()">Guardar</ion-button>
+    </div>
+  </div>
 
-  <h1>Puntos</h1>
-  <p>Current Position: ({{currentPosition?.latitude}}, {{currentPosition?.longitude}}) </p>
-  <p>Accuracy: {{currentPosition?.precision}}</p>
-  <p>Distance from Last Position: {{distance}}</p>
+</ion-content>
+
+<ion-bottom-sheet 
+    [(state)]="sheetState"  
+    minHeight="110" 
+    topDistance="20"
+    hideCloseButton="true"
+    roundBorderOnTop="true"
+    shadowBorderOnTop="false"
+    title="Coordenadas"
+    dockedHeight="400"
+  >
   <ion-list>
-    <ion-card *ngFor="let point of points">
-      <ion-item>
-        <ion-card-header>
-          <ion-card-subtitle>GET COORDINATES</ion-card-subtitle>
-          <ion-card-title>Geolocation</ion-card-title>
-        </ion-card-header>
+    <!-- <ion-card *ngFor="let point of points; let i = index"> -->
+      <ion-item *ngFor="let point of points; let i = index">
+        <!-- <ion-card-header>
+          <ion-card-title>Coordenada {{i}}</ion-card-title>
+        </ion-card-header> -->
     
-        <ion-card-content>
+        <!-- <ion-card-content> -->
           Latitude: {{ point?.latitude }} <br>
          Longitude: {{ point?.longitude }} <br>
           Accuracy: {{ point?.precision }}m
-        </ion-card-content>
+        <!-- </ion-card-content> -->
       </ion-item> 
-    </ion-card>
+    <!-- </ion-card> -->
   </ion-list>
-
-  <ion-button expand="block" (click)="saveLocation()">Locate</ion-button>
-</div>
-
-</ion-content>
+</ion-bottom-sheet>
