@@ -6,6 +6,7 @@ import { Point } from 'src/classes/point';
 import { SheetState } from 'ion-bottom-sheet';
 const { Haptics } = Plugins;
 const { Geolocation } = Plugins;
+import { Platform } from '@ionic/angular';
 
 @Component({
   selector: 'app-tracker',
@@ -22,11 +23,13 @@ export class TrackerPage implements OnInit {
 
   // Sheet Variables
   sheetState: SheetState = SheetState.Bottom
+  sheetMinHeight: number = 220;
 
   constructor(
     private loadingController: LoadingController,
     private routeService: RouteService,
-    private alertController: AlertController) { }
+    private alertController: AlertController,
+    private platform: Platform) { }
 
   ngOnInit() {
     // this.presentLoading('Calibrando GPS');
@@ -39,6 +42,15 @@ export class TrackerPage implements OnInit {
     // }, {});
     this.startTracking();
     this.didStartTracking = true;
+    this.calculateBottomSheetMinHeight();
+  }
+
+  calculateBottomSheetMinHeight() {
+    if (this.platform.is("iphone")) {
+      this.sheetMinHeight = 220;
+    } else if (this.platform.is("desktop")) {
+      this.sheetMinHeight = 110;
+    }
   }
 
   /**

@@ -21,36 +21,37 @@
     <p>Distancia desde el último punto: {{distance}}</p>
     <p>Coordenadas guardados: {{ points.length }}</p>
 
-    <div class="button-container">
+    <div class="button-container" [ngStyle]="{'bottom': sheetMinHeight}">
       <ion-button expand="block" class="ion-no-margin" [disabled]="saveButtonIsDisabled()" (click)="endTracking()">Guardar</ion-button>
     </div>
   </div>
 
+
+
 </ion-content>
 
 <ion-bottom-sheet 
-    [(state)]="sheetState"  
-    minHeight="220" 
-    topDistance="20"
-    hideCloseButton="true"
-    roundBorderOnTop="true"
-    shadowBorderOnTop="false"
-    title="Coordenadas"
-    dockedHeight="400"
-  >
-  <ion-list>
-    <!-- <ion-card *ngFor="let point of points; let i = index"> -->
-      <ion-item *ngFor="let point of points; let i = index">
-        <!-- <ion-card-header>
-          <ion-card-title>Coordenada {{i}}</ion-card-title>
-        </ion-card-header> -->
-    
-        <!-- <ion-card-content> -->
-          Latitude: {{ point?.latitude }} <br>
-         Longitude: {{ point?.longitude }} <br>
-          Accuracy: {{ point?.precision }}m
-        <!-- </ion-card-content> -->
-      </ion-item> 
-    <!-- </ion-card> -->
-  </ion-list>
+[(state)]="sheetState"  
+[minHeight]="sheetMinHeight" 
+hideCloseButton="true"
+roundBorderOnTop="true"
+shadowBorderOnTop="false"
+title="Coordenadas"
+dockedHeight="400"
+>
+<ion-list>
+<ion-card *ngFor="let point of points; let i = index">
+  <ion-item>
+    <ion-card-header>
+      <ion-card-title>Coordenada {{i}}</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      Latitude: {{ point?.latitude }} <br>
+     Longitude: {{ point?.longitude }} <br>
+      Accuracy: {{ point?.precision }}m
+    </ion-card-content>
+  </ion-item> 
+</ion-card>
+</ion-list>
 </ion-bottom-sheet>
