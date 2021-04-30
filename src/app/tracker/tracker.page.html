@@ -1,8 +1,11 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      Rastrear
-    </ion-title>
+    <ion-buttons slot="primary">
+      <ion-button color="primary" [disabled]="saveButtonIsDisabled()" (click)="endTracking()">
+        Guardar
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Rastrear</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -13,17 +16,17 @@
     </ion-toolbar>
   </ion-header>
 
-  <div class="container ion-activatable ion-text-center" (click)="saveLocation()">
-    <ion-ripple-effect></ion-ripple-effect>
-    <h1>Crear Ruta</h1>
-    <p>Coordenada Actual: ({{currentPosition?.latitude}}, {{currentPosition?.longitude}}) </p>
-    <p>Precisión: {{currentPosition?.precision}}</p>
-    <p>Distancia desde el último punto: {{distance}}</p>
-    <p>Coordenadas guardados: {{ points.length }}</p>
+  <form>
+    <ion-item>
+      <ion-label position="floating">Nombre</ion-label>
+      <ion-input></ion-input>
+    </ion-item>
+  </form>
 
-    <div class="button-container" [ngStyle]="{'bottom': sheetMinHeight}">
-      <ion-button expand="block" class="ion-no-margin" [disabled]="saveButtonIsDisabled()" (click)="endTracking()">Guardar</ion-button>
-    </div>
+  <div class="container ion-activatable" (click)="saveLocation()">
+    <ion-ripple-effect></ion-ripple-effect>
+    <p>Distancia desde el último punto: {{distance}}</p>
+    <p>Precisión: {{currentPosition?.precision}}m</p>
   </div>
 
 
@@ -37,7 +40,7 @@ topDistance="20"
 hideCloseButton="true"
 roundBorderOnTop="true"
 shadowBorderOnTop="false"
-title="Coordenadas"
+[title]="getSheetTitle()"
 dockedHeight="400"
 >
 <ion-list>
@@ -48,9 +51,9 @@ dockedHeight="400"
     </ion-card-header>
 
     <ion-card-content>
-      Latitude: {{ point?.latitude }} <br>
-     Longitude: {{ point?.longitude }} <br>
-      Accuracy: {{ point?.precision }}m
+      Latitud: {{ point?.latitude }} <br>
+      Longitud: {{ point?.longitude }} <br>
+      Precisión: {{ point?.precision }}m
     </ion-card-content>
   </ion-item> 
 </ion-card>

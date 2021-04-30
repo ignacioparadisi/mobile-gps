@@ -7,6 +7,7 @@ import { SheetState } from 'ion-bottom-sheet';
 const { Haptics } = Plugins;
 const { Geolocation } = Plugins;
 import { Platform } from '@ionic/angular';
+import { AudioService } from '../../services/audio.service';
 
 @Component({
   selector: 'app-tracker',
@@ -18,31 +19,30 @@ export class TrackerPage implements OnInit {
   currentPosition: Point = null;
   points: Point[] = [];
   didStartTracking = false;
-  watchId: string;
+  watchId: string = null;
   distance: number = 0;
+  routeName: string = "Ruta";
 
   // Sheet Variables
   sheetState: SheetState = SheetState.Bottom
   sheetMinHeight: number = 220;
-
   constructor(
     private loadingController: LoadingController,
     private routeService: RouteService,
     private alertController: AlertController,
-    private platform: Platform) { }
+    private platform: Platform,
+    private audio: AudioService) { }
 
   ngOnInit() {
-    // this.presentLoading('Calibrando GPS');
-    // this.calibrateGPS((response) => {
-    //   this.loadingController.dismiss();
-    // }, (error) => {
-    //   this.loadingController.dismiss();
-    // }, () => {
-    //   this.loadingController.dismiss();
-    // }, {});
     this.startTracking();
     this.didStartTracking = true;
     this.calculateBottomSheetMinHeight();
+    this.audio.preload('click', 'assets/audio/click.mp3');
+    this.audio.preload('save-success', 'assets/audio/save-success.mp3')
+  }
+
+  getSheetTitle() {
+    return `Coordenadas (${this.points.length})`;
   }
 
   calculateBottomSheetMinHeight() {
@@ -70,6 +70,9 @@ export class TrackerPage implements OnInit {
   }
 
   startTracking() {
+    if (this.watchId != null) {
+      Geolocation.clearWatch({ id: this.watchId });
+    }
     const options = {
       timeout: 10000,
       enableHighAccuracy: true
@@ -89,8 +92,7 @@ export class TrackerPage implements OnInit {
 
       if (this.points.length > 0) {
         let lastPoint = this.points[this.points.length - 1];
-        let distance = lastPoint.distancePythagoras(this.currentPosition);
-        console.log(distance);
+        let distance = lastPoint.distance(this.currentPosition);
         this.distance = distance;
         if (distance > 10) {
           // Vibrate
@@ -106,34 +108,10 @@ export class TrackerPage implements OnInit {
       enableHighAccuracy: true
     };
     this.saveCoordinate(this.currentPosition);
-    this.hapticsImpact(HapticsImpactStyle.Medium);
-    // try {
-    //   // this.presentLoading('Obteniendo Coordenada');
-    //   let coordinates = await Geolocation.getCurrentPosition(options);
-    //   // this.loadingController.dismiss();
-    //   console.log(coordinates)
-
-    //     // if (coordinates.coords.accuracy > 20) {
-    //     //   this.presentLoading('Calibrando GPS');
-    //     //   this.calibrateGPS((position) => {
-    //     //     console.log('Save location after calibration');
-    //     //     this.saveCoordinate(position.coords);
-    //     //     this.loadingController.dismiss();
-    //     //   }, () => {
-    //     //     this.loadingController.dismiss();
-    //     //   }, {}, {});
-    //     // } else {
-    //     this.saveCoordinate(coordinates.coords);
-    //     this.hapticsImpact(HapticsImpactStyle.Medium);
-    //     // }
-    // } catch (error) {
-    //   this.presentErrorAlert(error.message);
-    //   console.log(error);
-    // }
+    this.audio.play('click');
   }
 
   private saveCoordinate(coordinate: Point) {
-    // const point = new Point(coordinate.longitude, coordinate.latitude, coordinate.accuracy);
     this.points.push(coordinate);
   }
 
@@ -210,7 +188,7 @@ export class TrackerPage implements OnInit {
 
   private createRoute() {
     const route = {
-      name: 'Ruta 1',
+      name: this.routeName,
       points: []
     };
     this.points.forEach(point => {
@@ -227,10 +205,9 @@ export class TrackerPage implements OnInit {
       this.loadingController.dismiss();
       this.didStartTracking = false;
       this.points = [];
-      Haptics.notification({ type: HapticsNotificationType.SUCCESS });
+      this.audio.play('save-success');
     }, error => {
       console.log(error);
-      Haptics.notification({ type: HapticsNotificationType.ERROR });
       this.loadingController.dismiss();
       this.presentErrorAlert(null, 'Hubo un error al crear la ruta.');
     });
