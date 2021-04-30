@@ -8,6 +8,7 @@ const { Haptics } = Plugins;
 const { Geolocation } = Plugins;
 import { Platform } from '@ionic/angular';
 import { AudioService } from '../../services/audio.service';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-tracker',
@@ -20,12 +21,16 @@ export class TrackerPage implements OnInit {
   points: Point[] = [];
   didStartTracking = false;
   watchId: string = null;
-  distance: number = 0;
-  routeName: string = "Ruta";
+  distance: string = "0";
 
   // Sheet Variables
   sheetState: SheetState = SheetState.Bottom
   sheetMinHeight: number = 220;
+
+  public form: FormGroup = new FormGroup({
+    name: new FormControl('', [Validators.required])
+  });
+
   constructor(
     private loadingController: LoadingController,
     private routeService: RouteService,
@@ -34,8 +39,8 @@ export class TrackerPage implements OnInit {
     private audio: AudioService) { }
 
   ngOnInit() {
+    this.presentLoading('Obteniendo ubicación');
     this.startTracking();
-    this.didStartTracking = true;
     this.calculateBottomSheetMinHeight();
     this.audio.preload('click', 'assets/audio/click.mp3');
     this.audio.preload('save-success', 'assets/audio/save-success.mp3')
@@ -78,6 +83,7 @@ export class TrackerPage implements OnInit {
       enableHighAccuracy: true
     };
     this.watchId = Geolocation.watchPosition(options, (position, error) => {
+      this.loadingController.dismiss();
       if (error) {
         console.log(error);
         if (error.code == 1) {
@@ -93,7 +99,7 @@ export class TrackerPage implements OnInit {
       if (this.points.length > 0) {
         let lastPoint = this.points[this.points.length - 1];
         let distance = lastPoint.distance(this.currentPosition);
-        this.distance = distance;
+        this.distance = distance.toFixed(2);
         if (distance > 10) {
           // Vibrate
           console.log('Aviso de guardar coordenada');
@@ -108,6 +114,7 @@ export class TrackerPage implements OnInit {
       enableHighAccuracy: true
     };
     this.saveCoordinate(this.currentPosition);
+    this.didStartTracking = true;
     this.audio.play('click');
   }
 
@@ -187,8 +194,11 @@ export class TrackerPage implements OnInit {
   // }
 
   private createRoute() {
+    if (!this.form.valid) {
+      return;
+    }
     const route = {
-      name: this.routeName,
+      name: this.form.controls.name.value,
       points: []
     };
     this.points.forEach(point => {
@@ -203,14 +213,19 @@ export class TrackerPage implements OnInit {
     this.presentLoading('Creando Ruta');
     this.routeService.createRoute(route).subscribe(response => {
       this.loadingController.dismiss();
-      this.didStartTracking = false;
-      this.points = [];
       this.audio.play('save-success');
+      this.reset();
     }, error => {
       console.log(error);
       this.loadingController.dismiss();
       this.presentErrorAlert(null, 'Hubo un error al crear la ruta.');
     });
+  }
+
+  reset() {
+    this.distance = "0";
+    this.points = [];
+    this.didStartTracking = false;
   }
 
   /**
