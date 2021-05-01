@@ -61,7 +61,7 @@ export class AccountPage implements OnInit {
   }
 
   private dismissLoading() {
-    this.loadingView.dismiss();
+    this.loadingController.dismiss();
   }
 
   public logOut() {
