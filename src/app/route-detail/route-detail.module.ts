@@ -7,13 +7,15 @@ import { IonicModule } from '@ionic/angular';
 import { RouteDetailPageRoutingModule } from './route-detail-routing.module';
 
 import { RouteDetailPage } from './route-detail.page';
+import { GoogleMapsModule } from '@angular/google-maps';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    RouteDetailPageRoutingModule
+    RouteDetailPageRoutingModule,
+    GoogleMapsModule
   ],
   declarations: [RouteDetailPage]
 })

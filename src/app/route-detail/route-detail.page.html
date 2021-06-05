@@ -11,11 +11,33 @@
     </ion-toolbar>
   </ion-header>
 
-  <ion-card *ngFor="let point of route?.points">
-      <ion-item>Latitude: {{ point.latitude }}</ion-item>
-      <ion-item>Longitude: {{ point.longitude }}</ion-item>
-      <ion-item>Precision: {{ point.precision }}</ion-item>
-  </ion-card>
+  <!-- <div class="map-container">
+    <div *ngIf="!route && !showError && !isLoading" class="not-selected-message-container align-items-center">
+      <div class="not-selected-message text-center">
+        <h2>Ninguna Ruta Seleccionada</h2>
+        <p>Por favor seleccione una ruta para visualizarla en el mapa</p>
+      </div>
+    </div>
 
-  <canvas #mapCanvas></canvas>
+    <div *ngIf="isLoading" class="d-flex justify-content-center not-selected-message-container align-items-center">
+      <div class="spinner-border" role="status" style="margin-top: 20px">
+        <span class="sr-only">Cargando...</span>
+      </div>
+    </div>
+
+    <div *ngIf="showError" class="not-selected-message-container align-items-center">
+      <div class="text-center" style="margin: 0 auto">
+        <h3>Hubo un error obteniendo la ruta</h3>
+        <button mat-raised-button type="button" color="primary" (click)="fetchRoute()" [disabled]="isLoading">Intentar
+          de nuevo</button>
+      </div>
+    </div>
+
+    <div [hidden]="!(route && !isLoading && !showError)">
+      <div id="map" #googleMap>
+
+      </div>
+    </div>
+  </div> -->
+  <google-map></google-map>
 </ion-content>

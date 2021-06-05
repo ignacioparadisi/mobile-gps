@@ -1,60 +1,93 @@
-import { Component, ElementRef, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Route } from 'src/classes/route';
-import { RouteService } from 'src/services/route.service';
 
 @Component({
   selector: 'app-route-detail',
   templateUrl: './route-detail.page.html',
   styleUrls: ['./route-detail.page.scss'],
 })
-export class RouteDetailPage implements OnInit, AfterViewInit {
-  @ViewChild('mapCanvas') canvas: ElementRef;
+export class RouteDetailPage implements OnInit {
+  // @ViewChild('googleMap') googleMap: ElementRef;
+  // map: google.maps.Map;
   route: Route;
 
-  constructor(private activatedRoute: ActivatedRoute,
-    private routeService: RouteService) { }
+  // windowSize = {
+  //   width: 500,
+  //   height: 500
+  // }
+
+  // showError = false;
+  // isLoading = false;
+
+  // title = '';
+  // mapPoints: google.maps.LatLng[] = [];
+  // origin: any;
+  // destination: any;
+
+  // private directionsService = new google.maps.DirectionsService;
+  // private directionsDisplay = new google.maps.DirectionsRenderer;
+
+  constructor(private activatedRoute: ActivatedRoute, private ref: ChangeDetectorRef) { }
 
   ngOnInit() {
     const route = this.activatedRoute.snapshot.paramMap.get('route');
     console.log(JSON.parse(route));
-    // this.fetchRoute(routeId);
+    this.route = JSON.parse(route);
+    //this.fetchRoute();
   }
 
-  ngAfterViewInit() {
-    
-  }
+  // ngOnChanges(): void {
+  //   this.fetchRoute();
+  // }
 
-  private fetchRoute(id: number) {
-    this.routeService.getRouteById(id).subscribe((route) => {
-      this.route = route;
-      var gameValuesX = route.points.map((point) => point.latitude);
-      for(var i=0;i<gameValuesX.length;i++){
-        // where canvas.width is the width of the canvas in pixels
-        console.log( this.mapRange( gameValuesX[i], 0, this.canvas.nativeElement.width, 0, this.canvas.nativeElement.width ) );
-      }
-    })
-  }
+  // fetchRoute() {
+  //   if (!this.route) { return }
+  //   this.showError = false;
+  //   this.title = this.route.name;
+  //   const origin = {
+  //     lat: Number(this.route.points[0].latitude),
+  //     lng: Number(this.route.points[0].longitude),
+  //   };
+  //   this.origin = origin;
+  //   const destination = {
+  //     lat: Number(this.route.points[this.route.points.length - 1].latitude),
+  //     lng: Number(this.route.points[this.route.points.length - 1].longitude),
+  //   };
+  //   let points = this.route.points.slice(1, -1);
+  //   const waypoints = points.map(point => {
+  //     this.mapPoints.push(new google.maps.LatLng(point.latitude, point.longitude))
+  //     return {
+  //       location: new google.maps.LatLng(point.latitude, point.longitude),
+  //       stopover: false
+  //     }
+  //   });
 
-  private mapRange(value, gameLow, gameHigh, canvasLow, canvasHigh) {
-    console.log('value ' + value)
-    console.log('gameLow ' + gameLow)
-    console.log('gameHigh ' + gameHigh)
-    console.log('canvasLow ' + canvasLow)
-    console.log('canvasHigh ' + canvasHigh)
-    return ( canvasLow + 
-        (canvasHigh - canvasLow) * (value - gameLow) / (gameHigh - gameLow) );
-  }
+  //   console.log(origin);
+  //   console.log(destination);
+  //   console.log(waypoints);
+  //   this.createMap(origin, destination, waypoints);
+  // }
 
-  calcgameMinMax(a) {
-    var min=100000000;
-    var max=-100000000;
-    for(var i=0;i<a.length;i++){
-        var value=a[i];
-        if(value<min){min=value;}
-        if(value>max){max=value;}
-    }
-    return({min:min,max:max});
-}
+  // createMap(origin, destination, waypoints) {
+  //   this.map = new google.maps.Map(this.googleMap.nativeElement, {
+  //     center: origin
+  //   })
+  //   this.directionsDisplay.setMap(this.map);
+  //   this.directionsService.route({
+  //     origin: new google.maps.LatLng(origin.lat, origin.lng),
+  //     destination: new google.maps.LatLng(destination.lat, destination.lng),
+  //     waypoints: waypoints,
+  //     travelMode: google.maps.TravelMode.WALKING,
+  //     unitSystem: google.maps.UnitSystem.METRIC
+  //   }, (response, status) => {
+  //     if (String(status) == "OK") {
+  //       this.directionsDisplay.setDirections(response);
+  //       this.ref.detectChanges();
+  //     } else {
+  //       this.showError = true;
+  //     }
+  //   });
+  // }
 
 }
